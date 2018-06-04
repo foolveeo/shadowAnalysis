@@ -106,6 +106,12 @@ def loadNormalsImages(folder):
     
     normalsRGB_float = normalsRGB.astype(float)
     normalsRGB_float = np.divide(normalsRGB_float, 255.0)
+    
+    
+    normalsRGB_float = np.multiply(normalsRGB_float, 2.0)
+    normalsRGB_float = np.subtract(normalsRGB_float, 1)
+    normalsRGB_float = np.clip(normalsRGB_float, 0, 1)
+    
     normalsRGB_shadowMask = cv2.bitwise_and(normalsRGB_float, normalsRGB_float, mask = shadowMask)
     normalsRGB_litMask = cv2.bitwise_and(normalsRGB_float, normalsRGB_float, mask = litMask)    
     
