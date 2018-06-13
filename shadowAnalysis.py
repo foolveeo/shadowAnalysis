@@ -11,8 +11,8 @@ import shadowAnalysisTools as tools
 
         
     
-sessionID = "bankpark"
-frameNbr = 135
+sessionID = "banktree"
+frameNbr = 155
 if(sessionID == ""):
     sessionID = input("Enter session ID: ")
 
@@ -69,7 +69,7 @@ if os.path.exists(sessionPath):
     processedFeatures_litMask = tools.processFeatures(rawFeatures_litMask_filtered, sunDir)
     
     tools.plotLogRLogB(processedFeatures_shadowMask, processedFeatures_litMask)
- 
+    # tools.savePlotLogRLogB(processedFeatures_shadowMask, processedFeatures_litMask, folder + "/logR-logB.png")
     plt.figure()
     plt.imshow(normalsRGB)
     plt.title("normalRGB")

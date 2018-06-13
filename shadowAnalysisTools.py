@@ -29,6 +29,14 @@ def plotLogRLogB(processedFeaturesShadow, processedFeaturesLit):
     plt.title("logR - logB shadows (blue) and lit (red)")
     
 
+def savePlotLogRLogB(processedFeaturesShadow, processedFeaturesLit, path):
+    
+    plt.figure()
+    plt.plot(processedFeaturesShadow[:,1],processedFeaturesShadow[:,2], 'bx')
+    plt.plot(processedFeaturesLit[:,1], processedFeaturesLit[:,2], 'ro')
+    plt.title("logR - logB shadows (blue) and lit (red)")
+    plt.savefig(path)
+
 def rgb_to_logRlogB(rgbImg):
     rows, cols, _ = rgbImg.shape
     
