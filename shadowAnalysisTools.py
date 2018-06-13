@@ -11,6 +11,136 @@ import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 import scipy.signal as signal
 
+
+def computeRadiances(Ea, Es):
+    
+    radSky = Ea / np.pi
+    
+    d = 0.53
+    sunMultiplier = 1 / (2 * np.pi * (1 - np.cos(np.deg2rad(d/2))))
+    radSun = Es * sunMultiplier
+    return radSky, radSun
+    
+
+def compute_ao_average(rawFeatures_filtered):
+    ao_avg = np.mean(rawFeatures_filtered[:,7])
+    return ao_avg
+    
+    
+def computeIrradiancesFulvio(k, sunSkyRatioR, sunSkyRatioB):
+    Esun = np.ones((3). np.float)
+    Esky = np.ones((3). np.float)
+
+    Esky[1] = 1
+    Esun[1] = Esky[1] * k
+    
+    
+def rgb_to_chRchB(r,g,b):
+    chR = r/g
+    chB = b/g
+    
+    return (chR, chB)
+
+def compute_k_g(shadowG, litG, aoShadow, aoLit, ns):
+    k_g1 = (litG * aoShadow) / (shadowG * ns)
+    k_g2 = aoLit/ns
+    k_g = k_g1 - k_g2
+    
+    return k_g
+    
+
+def compute_k_rgb(shadowRGB, litRGB, aoShadow, aoLit, ns):
+    k_r = compute_k_g(shadowRGB[0], litRGB[0], aoShadow, aoLit, ns)
+    k_g = compute_k_g(shadowRGB[1], litRGB[1], aoShadow, aoLit, ns)
+    k_b = compute_k_g(shadowRGB[2], litRGB[2], aoShadow, aoLit, ns)
+    
+    k = (k_r + k_g + k_b) / 3.0
+    
+    return k
+    
+
+def computeRedBlueRatio(rbShadow, rbLit, aoLit, ns, k):
+    rRatio = rbLit[0] / rbShadow[0]
+    bRatio = rbLit[1] / rbShadow[1]
+    multiplier = (aoLit + (ns*k)) / ns
+    rRatio = rRatio * multiplier
+    bRatio = bRatio * multiplier
+    
+    redRatio = rRatio - (aoLit / ns)
+    blueRatio = bRatio - (aoLit / ns)
+    
+    return redRatio, blueRatio
+
+def compute_k(rawFeatures):
+    averageG = np.mean(rawFeatures[:,1])
+    return ((np.pi * averageG) / 0.3)
+
+
+def computeIrradiances(C, aoShadow, aoLit, nsLit, nsShadow, k, aoAvg, nsAvg):
+
+    vecRatio = nsAvg / nsLit
+    d1 = np.multiply(vecRatio, (np.subtract(np.divide(aoLit, C), aoShadow)))
+    denominatorSky = np.add(d1, aoAvg)
+    numerator = np.subtract(aoLit, np.multiply(C, aoShadow))
+    denominatorSun = np.multiply(nsLit, C)
+    frac = np.divide(numerator, denominatorSun)
+    
+    Ea = np.divide(k, denominatorSky)
+    Es = np.multiply(Ea, frac)
+    
+    #d1 = vecRatio * ((ao_t1[x,y] / C) - ao_t0[x,y])
+    #denominatorSky = aoWhiteBal + d1
+    #numerator = ao_t1[x,y] - (C * ao_t0[x,y])
+    #denominatorSun = np.dot(normals_t1[x,y], sunDir) * C
+    #if(denominatorSun != 0.0 and denominatorSky != 0.0):
+    #frac = ( numerator / denominatorSun )
+    #newMask[x,y,ch] = 255;
+    #Ea[x,y,ch] = k / denominatorSky
+    #Es[x,y,ch] = Ea[x,y,ch] * frac
+    
+    
+    return Ea, Es
+def computeMeans(rawFeaturesShadow, rawFeaturesLit, processedFeaturesShadow, processedFeaturesLit):
+    
+    rgbShadow = meanRGB(rawFeaturesShadow)
+    rgbLit = meanRGB(rawFeaturesLit)
+    nsShadow = meanNS(processedFeaturesShadow)
+    nsLit = meanNS(processedFeaturesLit)
+    aoShadow = meanAO(rawFeaturesShadow)
+    aoLit = meanAO(rawFeaturesLit)
+    aoLit = meanAO(rawFeaturesShadow)
+    
+    return (rgbShadow, rgbLit, nsShadow, nsLit, aoShadow, aoLit)
+    
+def meanRGB(rawFeatures):
+    rgbCumulative = np.zeros((3), np.float)
+    for i in range(rawFeatures.shape[0]):
+        for ch in range(3):    
+            rgbCumulative[ch] = np.add(rgbCumulative[ch], rawFeatures[i,ch])
+        
+    rgbCumulative = np.divide(rgbCumulative, rawFeatures.shape[0])
+    return rgbCumulative
+
+
+def meanAO(rawFeatures):
+    aoCumulative = 0
+    for i in range(rawFeatures.shape[0]):   
+        aoCumulative += rawFeatures[i,7]
+        
+    aoCumulative /= rawFeatures.shape[0]
+    return aoCumulative
+
+
+def meanNS(processedFeatures):
+    
+    nsCumulative = 0
+    for i in range(processedFeatures.shape[0]):   
+        nsCumulative += processedFeatures[i,0]
+        
+    nsCumulative /= processedFeatures.shape[0]
+    return nsCumulative
+
+        
 def getPixelFeatures(x, y, rawFeatures, widthImg, sunDir):
     
     ## NOT tested yet
