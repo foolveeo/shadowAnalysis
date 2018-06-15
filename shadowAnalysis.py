@@ -13,8 +13,8 @@ import numpy as np
 
         
     
-sessionID = "bankpark"
-frameNbr = 135
+sessionID = "banktree"
+frameNbr = 155
 if(sessionID == ""):
     sessionID = input("Enter session ID: ")
 
@@ -76,9 +76,17 @@ if os.path.exists(sessionPath):
     processedFeatures = tools.processFeatures(rawFeatures_filtered, sunDir)
     processedFeatures_shadowMask = tools.processFeatures(rawFeatures_shadowMask_filtered, sunDir)
     processedFeatures_litMask = tools.processFeatures(rawFeatures_litMask_filtered, sunDir)
-    
+
+
+    tools.plotLogRLogB(processedFeatures_shadowMask, processedFeatures_litMask)
+    # tools.savePlotLogRLogB(processedFeatures_shadowMask, processedFeatures_litMask, folder + "/logR-logB.png")
+    plt.figure()
+    plt.imshow(normalsRGB)
+    plt.title("normalRGB")
+
     rgbShadow, rgbLit, nsShadow, nsLit, aoShadow, aoLit = tools.computeMeans(rawFeatures_shadowMask_filtered, rawFeatures_litMask_filtered, processedFeatures_shadowMask, processedFeatures_litMask)
     
+
     
      # my approach
     rbShadow = tools.rgb_to_chRchB(rgbShadow[0], rgbShadow[1], rgbShadow[2])
