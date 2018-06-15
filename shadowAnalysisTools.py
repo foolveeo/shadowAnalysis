@@ -54,6 +54,7 @@ def compute_k_rgb(shadowRGB, litRGB, aoShadow, aoLit, ns):
     k_g = compute_k_g(shadowRGB[1], litRGB[1], aoShadow, aoLit, ns)
     k_b = compute_k_g(shadowRGB[2], litRGB[2], aoShadow, aoLit, ns)
     
+    print("k_r: ", k_r, "k_g: ", k_g, "k_b: ", k_b)
     k = (k_r + k_g + k_b) / 3.0
     
     return k

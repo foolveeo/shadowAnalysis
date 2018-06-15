@@ -88,11 +88,10 @@ if os.path.exists(sessionPath):
     
     sunSkyRatioR, sunSkyRatioB = tools.computeRedBlueRatio(rbShadow, rbLit, aoLit, nsLit, k_fulvio)
 #    
-    print("k fulvio", k_fulvio)
-    print("k fulvio green", k_fulvio_g)
+
     
-    print("redSunSkyRatio according to Fulvio: ", sunSkyRatioR)
-    print("blueSunSkyRatio according to Fulvio: ", sunSkyRatioB)
+    print("redSunSkyRatio according using chromaticity: ", sunSkyRatioR)
+    print("blueSunSkyRatio according using chromaticity: ", sunSkyRatioB)
     
     
     
@@ -100,7 +99,7 @@ if os.path.exists(sessionPath):
     k = tools.compute_k(rawFeatures_filtered)
     C = np.divide(rgbShadow, rgbLit)
     ao_avg = tools.compute_ao_average(rawFeatures_shadowMask_filtered)
-    Ea, Es = tools.computeIrradiances(C, aoShadow, aoLit, nsLit, nsShadow, k_fulvio, ao_avg, nsShadow)
+    Ea, Es = tools.computeIrradiances(C, aoShadow, aoLit, nsLit, nsShadow, k, ao_avg, nsShadow)
     La, Ls = tools.computeRadiances(Ea, Es)
     
     
@@ -122,8 +121,8 @@ if os.path.exists(sessionPath):
     print("Ls = ", Ls)
     print("k Claus", k)
     
-    print("redSunSkyRatio according to Claus: ", (Es[1] / Ea[0]))
-    print("blueSunSkyRatio according to Claus: ", (Es[2] / Ea[2]))
+    print("redSunSkyRatio dynamic shadows: ", (Es[1] / Ea[0]))
+    print("blueSunSkyRatio dynamic shadows: ", (Es[2] / Ea[2]))
     
     
    
